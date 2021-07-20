@@ -28,7 +28,7 @@ const App = () => {
     }, [status, stop$])
 
     const start = () => {
-        status === 'stop'?setStatus('start'):stop()
+        status === 'stop' ? setStatus('start') : stop()
     }
 
     const stop = () => {
