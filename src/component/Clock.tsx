@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import Button from './Button/Button'
 
 type PropsType = {
+    time: number
     start: ()=>void
     stop: ()=>void
     reset: ()=>void
@@ -10,8 +11,8 @@ type PropsType = {
 
 const Clock = (props: PropsType) => {
 
-    const stringTime = new Date(0,0,0).toLocaleTimeString()
-
+    const stringTime = new Date(props.time).toISOString().slice(11, 19)
+       
     return (
         <div>
             <div>
