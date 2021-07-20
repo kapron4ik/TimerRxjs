@@ -1,53 +1,39 @@
 import * as React from 'react';
-import {useEffect, useState} from "react";
+import {useEffect, useState, useMemo} from "react";
 import './App.css';
 import Clock from './component/Clock';
-import {interval, Subject, fromEvent} from "rxjs";
-import {takeUntil, buffer, map, filter, debounceTime} from "rxjs/operators";
+import {interval, Subject} from "rxjs";
+import {takeUntil} from "rxjs/operators";
 
 
-type StateType = 'start' | 'stop' | 'wait'
+export type StatusType = 'start' | 'stop'
 
 const App = () => {
-    const [state, setState] = useState<StateType>('stop')
+    const [status, setStatus] = useState<StatusType>('stop')
     const [time, setTime] = useState<number>(0)
 
-    const stop$ = new Subject()
-    // const click$ = fromEvent(document, 'click')
-    const click$ = new Subject()
-    const doubleClick$ = click$.pipe(
-        buffer(()=>click$.debounce(300)),
-        map(val => val.length),
-        filter(val => val >= 2)
-)
-
+    const stop$ = useMemo(() => new Subject(), []);
 
     useEffect(() => {
-        // const unsubscribe$ = new Subject()
-
         let sub = interval(1000)
             .pipe(takeUntil(stop$))
-            .pipe(takeUntil(doubleClick$))
             .subscribe(() => {
-                if (state === "start") {
+                if (status === "start") {
                     setTime(val => val + 1000)
                 }
             })
         return () => {
-            // unsubscribe$.next('')
-            // unsubscribe$.complete()
             sub.complete()
         }
-    }, [state])
-
+    }, [status, stop$])
 
     const start = () => {
-        setState('start')
+        status === 'stop'?setStatus('start'):stop()
     }
 
     const stop = () => {
         stop$.next()
-        setState('stop')
+        setStatus('stop')
         setTime(0)
     }
 
@@ -56,13 +42,14 @@ const App = () => {
     }
 
     const wait = () => {
-        setState('wait')
-        click$.next()
+        setStatus('stop')
+        stop$.next()
     }
 
     return (
         <>
             <Clock
+                status={status}
                 time={time}
                 start={start}
                 stop={stop}

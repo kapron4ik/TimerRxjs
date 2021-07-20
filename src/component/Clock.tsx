@@ -1,7 +1,9 @@
-import React, {useState} from 'react'
+import React from 'react'
 import Button from './Button/Button'
+import { StatusType } from '../App'
 
 type PropsType = {
+    status: StatusType
     time: number
     start: ()=>void
     stop: ()=>void
@@ -19,9 +21,8 @@ const Clock = (props: PropsType) => {
                 {stringTime}
             </div>
 
-            <Button onClick={props.start}>start</Button>
-            <Button onClick={props.stop}>stop</Button>
-            <Button onClick={props.wait}>wait</Button>
+            <Button onClick={props.start}>{props.status === 'stop'?'start':'stop'}</Button>
+            <Button onDoubleClick ={props.wait}>wait</Button>
             <Button onClick={props.reset}>reset</Button>
 
         </div>
